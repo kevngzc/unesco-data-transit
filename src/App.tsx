@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import datasetsConfig from './datasets-config.json';
+import subwayIcon from '/assets/icons/subway-icon.svg';
+import mapBackground from '/assets/images/cartographic-background.png';
 
 const UNESCO_API_URL = 'https://data.unesco.org/api/explore/v2.1/monitoring/datasets/ods-datasets-monitoring/exports/json?lang=en&timezone=Europe%2FBerlin';
 
@@ -213,7 +215,7 @@ const App = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img
-            src="./assets/icons/subway-icon.svg"
+            src={subwayIcon}
             alt="Subway"
             style={{
               width: '48px',
@@ -266,7 +268,7 @@ const App = () => {
         zIndex: 1
       }}>
         <img
-          src="./assets/images/cartographic-background.png"
+          src={mapBackground}
           alt="Cartographic map background"
           style={{
             width: '100%',
