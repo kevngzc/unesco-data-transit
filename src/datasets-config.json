@@ -1,0 +1,120 @@
+{
+  "datasets": [
+    {
+      "dataset_id": "pax001",
+      "themes": ["global"],
+      "position": { "x": 120, "y": 120 }
+    },
+    {
+      "dataset_id": "prj001",
+      "themes": ["global"],
+      "position": { "x": 360, "y": 120 }
+    },
+    {
+      "dataset_id": "co2001",
+      "themes": ["science"],
+      "position": { "x": 120, "y": 240 }
+    },
+    {
+      "dataset_id": "mab001",
+      "themes": ["science"],
+      "position": { "x": 360, "y": 240 }
+    },
+    {
+      "dataset_id": "eg0001",
+      "themes": ["science"],
+      "position": { "x": 600, "y": 240 }
+    },
+    {
+      "dataset_id": "wdi001",
+      "themes": ["science"],
+      "position": { "x": 780, "y": 240 }
+    },
+    {
+      "dataset_id": "whc001",
+      "themes": ["culture"],
+      "position": { "x": 240, "y": 480 }
+    },
+    {
+      "dataset_id": "ich001",
+      "themes": ["culture"],
+      "position": { "x": 360, "y": 480 }
+    },
+    {
+      "dataset_id": "chp001",
+      "themes": ["culture"],
+      "position": { "x": 480, "y": 480 }
+    },
+    {
+      "dataset_id": "cce001",
+      "themes": ["culture"],
+      "position": { "x": 600, "y": 480 }
+    },
+    {
+      "dataset_id": "cou001",
+      "themes": ["culture", "science", "education", "information"],
+      "position": { "x": 720, "y": 480 }
+    },
+    {
+      "dataset_id": "edp002",
+      "themes": ["education"],
+      "position": { "x": 480, "y": 360 }
+    },
+    {
+      "dataset_id": "fej001",
+      "themes": ["education"],
+      "position": { "x": 600, "y": 360 }
+    },
+    {
+      "dataset_id": "la0001",
+      "themes": ["education"],
+      "position": { "x": 720, "y": 360 }
+    },
+    {
+      "dataset_id": "sdg002",
+      "themes": ["culture", "science", "education", "information"],
+      "position": { "x": 480, "y": 240 }
+    },
+    {
+      "dataset_id": "voc001",
+      "themes": ["information"],
+      "position": { "x": 120, "y": 480 }
+    },
+    {
+      "dataset_id": "doc001",
+      "themes": ["information"],
+      "position": { "x": 120, "y": 600 }
+    }
+  ],
+  "connections": [
+    { "from": "pax001", "to": "prj001", "line": "global" },
+    { "from": "prj001", "to": "sdg002", "line": "global" },
+
+    { "from": "co2001", "to": "mab001", "line": "science" },
+    { "from": "mab001", "to": "sdg002", "line": "science" },
+    { "from": "sdg002", "to": "eg0001", "line": "science" },
+    { "from": "eg0001", "to": "wdi001", "line": "science" },
+
+    { "from": "voc001", "to": "whc001", "line": "information" },
+    { "from": "whc001", "to": "ich001", "line": "culture" },
+    { "from": "ich001", "to": "chp001", "line": "culture" },
+    { "from": "chp001", "to": "cce001", "line": "culture" },
+    { "from": "cce001", "to": "cou001", "line": "culture" },
+
+    { "from": "sdg002", "to": "edp002", "line": "education" },
+    { "from": "edp002", "to": "fej001", "line": "education" },
+    { "from": "fej001", "to": "la0001", "line": "education" },
+
+    { "from": "voc001", "to": "doc001", "line": "information" },
+
+    { "from": "chp001", "to": "edp002", "line": "education" },
+    { "from": "la0001", "to": "cou001", "line": "education" }
+  ],
+  "lineColors": {
+    "culture": "#E91E63",
+    "education": "#00BCD4",
+    "science": "#8BC34A",
+    "information": "#FFC107",
+    "global": "#FF5722"
+  }
+}
