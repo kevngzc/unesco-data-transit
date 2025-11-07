@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import datasetsConfig from './datasets-config.json';
 
 const UNESCO_API_URL = 'https://data.unesco.org/api/explore/v2.1/monitoring/datasets/ods-datasets-monitoring/exports/json?lang=en&timezone=Europe%2FBerlin';
@@ -13,6 +13,14 @@ interface Dataset {
   apiData?: any;
 }
 
+type LineColors = {
+  culture: string;
+  education: string;
+  science: string;
+  information: string;
+  global: string;
+}
+
 const App = () => {
   const [discoveredStations, setDiscoveredStations] = useState(new Set(['whc001']));
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
@@ -23,7 +31,7 @@ const App = () => {
   const [error, setError] = useState<string | null>(null);
 
   // Line colors from config
-  const lineColors = datasetsConfig.lineColors;
+  const lineColors = datasetsConfig.lineColors as LineColors;
   const connections = datasetsConfig.connections;
 
   // Fetch and merge UNESCO API data with config
@@ -89,7 +97,7 @@ const App = () => {
 
   const totalStations = allStations.length;
 
-  const discoverStation = (stationId) => {
+  const discoverStation = (stationId: string) => {
     if (!discoveredStations.has(stationId)) {
       setAnimatingStations(prev => new Set(prev).add(stationId));
       setTimeout(() => {
@@ -104,19 +112,19 @@ const App = () => {
     setSelectedStation(stationId);
   };
 
-  const getConnectedStations = (stationId) => {
+  const getConnectedStations = (stationId: string) => {
     return connections
       .filter(conn => conn.from === stationId || conn.to === stationId)
       .map(conn => conn.from === stationId ? conn.to : conn.from);
   };
 
-  const isStationAccessible = (stationId) => {
+  const isStationAccessible = (stationId: string) => {
     if (discoveredStations.has(stationId)) return true;
     const connected = getConnectedStations(stationId);
     return connected.some(id => discoveredStations.has(id));
   };
 
-  const getStationInfo = (stationId) => {
+  const getStationInfo = (stationId: string) => {
     return allStations.find(s => s.id === stationId);
   };
 
@@ -290,7 +298,7 @@ const App = () => {
       >
         {/* Define glow filters */}
         <defs>
-          {Object.entries(lineColors).map(([line, color]) => (
+          {Object.entries(lineColors).map(([line]) => (
             <filter key={line} id={`glow-${line}`} x="-50%" y="-50%" width="200%" height="200%">
               <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
               <feMerge>
@@ -307,7 +315,9 @@ const App = () => {
           const fromStation = getStationInfo(conn.from);
           const toStation = getStationInfo(conn.to);
           const isVisible = discoveredStations.has(conn.from) && discoveredStations.has(conn.to);
-          
+
+          if (!fromStation || !toStation) return null;
+
           return (
             <line
               key={idx}
@@ -315,7 +325,7 @@ const App = () => {
               y1={fromStation.y}
               x2={toStation.x}
               y2={toStation.y}
-              stroke={lineColors[conn.line]}
+              stroke={lineColors[conn.line as keyof LineColors]}
               strokeWidth="8"
               opacity={isVisible ? 0.9 : 0.1}
               strokeLinecap="round"
@@ -352,7 +362,7 @@ const App = () => {
                   cx={station.x}
                   cy={station.y}
                   r={isSelected ? (isTransferStation ? 28 : 25) : (isTransferStation ? 24 : 20)}
-                  fill={lineColors[stationLines[0]]}
+                  fill={lineColors[stationLines[0] as keyof LineColors]}
                   opacity={isAnimating ? 0.6 : 0.3}
                   style={{
                     transition: 'all 0.3s ease'
@@ -368,7 +378,7 @@ const App = () => {
                     cy={station.y}
                     r={isSelected ? 20 : 18}
                     fill="none"
-                    stroke={lineColors[stationLines[1]]}
+                    stroke={lineColors[stationLines[1] as keyof LineColors]}
                     strokeWidth="2"
                     opacity="0.7"
                   />
@@ -378,7 +388,7 @@ const App = () => {
                       cy={station.y}
                       r={isSelected ? 24 : 22}
                       fill="none"
-                      stroke={lineColors[stationLines[2]]}
+                      stroke={lineColors[stationLines[2] as keyof LineColors]}
                       strokeWidth="1.5"
                       opacity="0.6"
                     />
@@ -392,12 +402,12 @@ const App = () => {
                 cy={station.y}
                 r={isSelected ? selectedRadius : baseRadius}
                 fill={isDiscovered ? '#fff' : isAccessible ? '#444' : '#222'}
-                stroke={isDiscovered ? lineColors[stationLines[0]] : '#333'}
+                stroke={isDiscovered ? lineColors[stationLines[0] as keyof LineColors] : '#333'}
                 strokeWidth={isSelected ? 3 : (isTransferStation ? 2.5 : 2)}
                 style={{
                   cursor: isAccessible ? 'pointer' : 'default',
                   transition: 'all 0.3s ease',
-                  filter: isDiscovered ? `drop-shadow(0 0 12px ${lineColors[stationLines[0]]})` : 'none'
+                  filter: isDiscovered ? `drop-shadow(0 0 12px ${lineColors[stationLines[0] as keyof LineColors]})` : 'none'
                 }}
                 onClick={() => isAccessible && discoverStation(station.id)}
               />
@@ -444,10 +454,12 @@ const App = () => {
         }}>
           {(() => {
             const station = getStationInfo(selectedStation);
+            if (!station) return null;
+
             const stationLines = Object.entries(datasets)
               .filter(([_, stations]) => stations.some(s => s.id === selectedStation))
               .map(([line]) => line);
-            
+
             return (
               <>
                 <div style={{
@@ -460,8 +472,8 @@ const App = () => {
                     width: '8px',
                     height: '8px',
                     borderRadius: '50%',
-                    backgroundColor: lineColors[stationLines[0]],
-                    boxShadow: `0 0 12px ${lineColors[stationLines[0]]}`
+                    backgroundColor: lineColors[stationLines[0] as keyof LineColors],
+                    boxShadow: `0 0 12px ${lineColors[stationLines[0] as keyof LineColors]}`
                   }} />
                   <h2 style={{
                     color: '#fff',
@@ -558,9 +570,9 @@ const App = () => {
                       <span
                         key={line}
                         style={{
-                          background: `${lineColors[line]}20`,
-                          border: `1px solid ${lineColors[line]}`,
-                          color: lineColors[line],
+                          background: `${lineColors[line as keyof LineColors]}20`,
+                          border: `1px solid ${lineColors[line as keyof LineColors]}`,
+                          color: lineColors[line as keyof LineColors],
                           padding: '6px 12px',
                           borderRadius: '6px',
                           fontSize: '12px',
@@ -601,7 +613,7 @@ const App = () => {
                   onClick={() => window.open(`https://data.unesco.org/explore/dataset/${station.id}/`, '_blank')}
                   style={{
                     width: '100%',
-                    background: lineColors[stationLines[0]],
+                    background: lineColors[stationLines[0] as keyof LineColors],
                     color: '#000',
                     border: 'none',
                     borderRadius: '8px',
@@ -612,12 +624,12 @@ const App = () => {
                     transition: 'transform 0.2s ease, box-shadow 0.2s ease'
                   }}
                   onMouseEnter={(e) => {
-                    e.target.style.transform = 'translateY(-2px)';
-                    e.target.style.boxShadow = `0 6px 20px ${lineColors[stationLines[0]]}60`;
+                    (e.target as HTMLButtonElement).style.transform = 'translateY(-2px)';
+                    (e.target as HTMLButtonElement).style.boxShadow = `0 6px 20px ${lineColors[stationLines[0] as keyof LineColors]}60`;
                   }}
                   onMouseLeave={(e) => {
-                    e.target.style.transform = 'translateY(0)';
-                    e.target.style.boxShadow = 'none';
+                    (e.target as HTMLButtonElement).style.transform = 'translateY(0)';
+                    (e.target as HTMLButtonElement).style.boxShadow = 'none';
                   }}
                 >
                   Explore Dataset →
