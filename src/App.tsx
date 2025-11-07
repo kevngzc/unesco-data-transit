@@ -213,7 +213,7 @@ const App = () => {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <img
-            src="/assets/icons/subway-icon.svg"
+            src="./assets/icons/subway-icon.svg"
             alt="Subway"
             style={{
               width: '48px',
@@ -266,7 +266,7 @@ const App = () => {
         zIndex: 1
       }}>
         <img
-          src="/assets/images/cartographic-background.png"
+          src="./assets/images/cartographic-background.png"
           alt="Cartographic map background"
           style={{
             width: '100%',
